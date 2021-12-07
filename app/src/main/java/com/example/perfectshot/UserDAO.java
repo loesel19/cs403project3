@@ -30,20 +30,9 @@ public class UserDAO {
         }
     }
 
-    public boolean get(User user){
-        if (true){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public boolean get(String username){
-        if (true){
-            return true;
-        }else{
-            return false;
-        }
+    public User get(String username){
+User user = new User("bbb","bababa","bbb","aaa","aaa@svsu.edu");
+        return user;
     }
     public boolean updateName(User user, String newName){
         if (true){
@@ -53,6 +42,13 @@ public class UserDAO {
         }
     }
     public boolean updateName(String username, String newName){
+        if (true){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public boolean contains(User user){
         if (true){
             return true;
         }else{

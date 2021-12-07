@@ -5,6 +5,8 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,7 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.perfectshot.MainActivity;
 import com.example.perfectshot.R;
+import com.example.perfectshot.RegistrationActivity;
+import com.example.perfectshot.User;
+import com.example.perfectshot.UserDAO;
 import com.example.perfectshot.ui.login.LoginViewModel;
 import com.example.perfectshot.ui.login.LoginViewModelFactory;
 import com.example.perfectshot.databinding.ActivityLoginBinding;
@@ -31,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+    String prefKey = "Perfect Shot";
+    SharedPreferences pref;
+    UserDAO dao = new UserDAO();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
+        final Button registerButton = binding.register;
+        registerButton.setEnabled(true);
+
+        pref = getSharedPreferences(prefKey,0);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -78,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 setResult(Activity.RESULT_OK);
 
-                //Complete and destroy login activity once successful
+
 
             }
         });
@@ -116,9 +129,10 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             /**
-             * this onClick method for the login button is where we will check to see if the Username
-             * is already in use, and if not we will then add the username/password tuple to the database
-             *
+             * this onClick method will search the db and see if a user is found with the username,
+             * and if the passwords match. if so we will place the userObject in shared preferences
+             * with an active status, and return the UI to the main menu, where the login button
+             * will be replaced with a logout button
              * @param v
              */
             @Override
@@ -126,6 +140,35 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+
+                User user = dao.get(usernameEditText.getText()+"");
+                if (user != null) {
+                    if (user.getPassword().equals(passwordEditText.getText())) {
+                        user.setStatus(true);
+                        if (pref != null) {
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("User", user.toString());
+                            editor.commit();
+                        }
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(i);
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Incorrect password", Toast.LENGTH_LONG);
+                        passwordEditText.setText("");
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(), "no user found", Toast.LENGTH_LONG);
+                    usernameEditText.setText("");
+                }
+
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), RegistrationActivity.class);
+                startActivity(i);
             }
         });
     }
