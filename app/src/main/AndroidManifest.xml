@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.perfectshot">
+<<<<<<< HEAD
+=======
+
+>>>>>>> c50a4521a4d5845d6235820185ae80b0d32dd877
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+=======
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+>>>>>>> c50a4521a4d5845d6235820185ae80b0d32dd877
 
     <application
         android:allowBackup="true"
@@ -16,9 +24,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PerfectShot">
+<<<<<<< HEAD
         <activity
             android:name=".RegistrationActivity"
             android:exported="true" />
+=======
+
+>>>>>>> c50a4521a4d5845d6235820185ae80b0d32dd877
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

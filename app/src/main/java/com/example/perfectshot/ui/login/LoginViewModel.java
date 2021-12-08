@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
+
 import com.example.perfectshot.User;
 import com.example.perfectshot.UserDAO;
+
 import com.example.perfectshot.data.LoginRepository;
 import com.example.perfectshot.data.Result;
 import com.example.perfectshot.data.model.LoggedInUser;
@@ -18,7 +20,9 @@ public class LoginViewModel extends ViewModel {
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private LoginRepository loginRepository;
+
     User user;
+
 
     LoginViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
