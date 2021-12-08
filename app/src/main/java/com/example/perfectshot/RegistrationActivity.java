@@ -49,21 +49,24 @@ public class RegistrationActivity extends AppCompatActivity {
      */
     public void register(View v){
         if (validateInputs()){
-            Log.d("User", "user added");
+
             if (dao.contains(user)){
-                Toast.makeText(this, "Username already in use", Toast.LENGTH_LONG);
+                Toast.makeText(this, "Username already in use", Toast.LENGTH_LONG).show();
                 username.setText("");
+                Log.d("User", "duplicate username");
             }else{
                 if (dao.add(user)){
-                    Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG);
+                    Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG).show();
+                    Log.d("User", "user added");
                     Intent i = new Intent(this, LoginActivity.class);
                     startActivity(i);
                 }else{
-                    Toast.makeText(this, "something went wrong please try again", Toast.LENGTH_LONG);
+                    Toast.makeText(this, "something went wrong please try again", Toast.LENGTH_LONG).show();
+                    Log.d("User", "weird error");
                 }
             }
         }else{
-            Toast.makeText(this, msg, Toast.LENGTH_LONG);
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             Log.d("User", "user was not added");
         }
     }
@@ -80,10 +83,11 @@ public class RegistrationActivity extends AppCompatActivity {
         String sUsername = username.getText().toString();
         String sPassword = password.getText().toString();
 
-        if (!(validateName(sName)) && validateEmail(sEmail) && validatePassword(sPassword) && validateUsername(sUsername))
+        if (!((validateName(sName)) && validateEmail(sEmail) && validatePassword(sPassword) && validateUsername(sUsername)))
             return false;
         else {
             user = new User(sUsername, sPassword, sName.split(" ")[0], sName.split(" ")[1], sEmail);
+            Log.d("User", "new user object created/ inputs were valid");
             return true;
         }
 
@@ -97,6 +101,12 @@ public class RegistrationActivity extends AppCompatActivity {
      * @return
      */
     public boolean validateName(String sname){
+        if (sname.split(" ").length != 2){
+            Log.d("User", "not first last");
+            msg = "please enter first and last name";
+            this.name.setText("");
+            return false;
+        }
         String first = sname.split(" ")[0];
         String last = sname.split(" ")[1];
         if (first.length() == 0){
@@ -108,14 +118,17 @@ public class RegistrationActivity extends AppCompatActivity {
             Log.d("User", "last name blank");
             return false;
         }
-        else if (!first.matches("[A-Za-z]")){
+        else if (!first.matches("[A-Za-z]*")){
+            Log.d("User", first);
             Log.d("User","bad first name");
             msg = "name can only be letters";
+            this.name.setText("");
             return false;
         }
-        else if (!last.matches("[A-Za-z]")){
+        else if (!last.matches("[A-Za-z]*")){
             Log.d("User", "bad last name");
             msg = "name can only be letters";
+            this.name.setText("");
             return false;
         }else
             return true;
@@ -135,6 +148,7 @@ public class RegistrationActivity extends AppCompatActivity {
         else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             msg = "invalid email";
             Log.d("User", "invalid email");
+            this.email.setText("");
             return false;
         }else
             return true;
@@ -154,6 +168,7 @@ public class RegistrationActivity extends AppCompatActivity {
         else if (!(password.trim().length() > 5)){
             msg = "password must be at least 6 characters";
             Log.d("User", "password too short");
+            this.password.setText("");
             return false;
         }else
             return true;
@@ -172,6 +187,7 @@ public class RegistrationActivity extends AppCompatActivity {
         }else if (username.contains(" ")){
             msg = "username can not contain spaces";
             Log.d("User", "username with spaces");
+            this.username.setText("");
             return false;
         }else
         return true;

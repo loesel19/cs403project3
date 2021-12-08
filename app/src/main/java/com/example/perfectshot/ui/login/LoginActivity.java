@@ -153,17 +153,19 @@ public class LoginActivity extends AppCompatActivity {
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
                     }else{
-                        Toast.makeText(getApplicationContext(), "Incorrect password", Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(), "Incorrect password", Toast.LENGTH_LONG).show();
                         passwordEditText.setText("");
                     }
                 }else{
-                    Toast.makeText(getApplicationContext(), "no user found", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "no user found", Toast.LENGTH_LONG).show();
                     usernameEditText.setText("");
                 }
 
             }
         });
-
+/**
+ * this method just takes the user to the registration activity
+ */
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

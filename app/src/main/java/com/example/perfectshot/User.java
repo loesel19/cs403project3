@@ -1,5 +1,7 @@
 package com.example.perfectshot;
 
+import android.widget.Toast;
+
 /**
  * this is a simple User object with username, password and a status
  */
@@ -42,6 +44,7 @@ public class User {
     }
 
     public String toString(){
-        return first_name + " " + last_name + " " + email + " " + username + " " + loggedIn;
+        return first_name.trim() + " " + last_name.trim() + " " + email.trim() + " " + username.trim() + " " + password.trim() + " " + loggedIn;
     }
+
 }
