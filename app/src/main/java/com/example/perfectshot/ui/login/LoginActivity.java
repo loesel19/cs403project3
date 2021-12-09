@@ -44,7 +44,8 @@ public class LoginActivity extends AppCompatActivity {
 
     String prefKey = "Perfect Shot";
     SharedPreferences pref;
-    UserDAO dao = new UserDAO();
+    UserDAO dao;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,11 +144,12 @@ public class LoginActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
+                dao = new UserDAO(getApplicationContext());
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
 
-                User user = dao.get(usernameEditText.getText()+"");
+                User user = dao.get(usernameEditText.getText()+"", passwordEditText.getText()+"");
                 if (user != null) {
                     if (user.getPassword().equals(passwordEditText.getText())) {
                         user.setStatus(true);

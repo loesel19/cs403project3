@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.perfectshot.ui.login.LoginActivity;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -36,8 +39,6 @@ public class RegistrationActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
 
-        dao = new UserDAO();
-
 
     }
 
@@ -47,29 +48,22 @@ public class RegistrationActivity extends AppCompatActivity {
      * it will add the user to the database and take them to the log in activity.
      * @param v
      */
-    public void register(View v){
+    public void register(View v) throws AuthFailureError {
+        dao = new UserDAO(this);
         if (validateInputs()){
 
-            if (dao.contains(user)){
-                Toast.makeText(this, "Username already in use", Toast.LENGTH_LONG).show();
-                username.setText("");
-                Log.d("User", "duplicate username");
-            }else{
                 if (dao.add(user)){
                     Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG).show();
                     Log.d("User", "user added");
                     Intent i = new Intent(this, LoginActivity.class);
                     startActivity(i);
                 }else{
-                    Toast.makeText(this, "something went wrong please try again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "try new username/ email", Toast.LENGTH_LONG).show();
                     Log.d("User", "weird error");
                 }
             }
-        }else{
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-            Log.d("User", "user was not added");
         }
-    }
+
 
     /**
      * this method will call validation methods for all the inputs and then returns true if inputs are valid
