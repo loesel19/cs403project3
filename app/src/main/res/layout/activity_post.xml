@@ -6,13 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".PostActivity">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="this is the post activity"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recPosts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnMakePost" />
+
+    <Button
+        android:id="@+id/btnPostToMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:drawableTint="#000000"
+        android:text="Main Menu"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnPostToSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableTint="#000000"
+        android:text="Settings"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnPostToMain"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnMakePost"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Post a Picture"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnPostToMain"
+        app:layout_constraintEnd_toStartOf="@+id/btnPostToSettings"
+        app:layout_constraintStart_toEndOf="@+id/btnPostToMain" />
 </androidx.constraintlayout.widget.ConstraintLayout>
