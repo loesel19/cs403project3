@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreatePostActivity">
+
+    <ImageView
+        android:id="@+id/imgToPost"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <Button
+        android:id="@+id/btnCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take Photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgToPost"
+        app:layout_constraintTop_toTopOf="@+id/imgToPost" />
+
+    <Button
+        android:id="@+id/btnGallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Photo"
+        app:layout_constraintBottom_toBottomOf="@+id/imgToPost"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgToPost" />
+
+    <EditText
+        android:id="@+id/editTextTextMultiLine"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="#707070"
+        android:drawableTint="#707070"
+        android:ems="10"
+        android:foregroundTint="#707070"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:shadowColor="#707070"
+        app:layout_constraintBottom_toTopOf="@+id/btnPost"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button
+        android:id="@+id/btnPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:text="Post"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="Write a short description:"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgToPost" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
