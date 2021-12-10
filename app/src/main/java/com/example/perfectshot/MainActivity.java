@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     Button logout;
     Button btnMap;
     Button posts;
-    Button createPost;
     Button settings;
 
     boolean userLoggedIn;
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         logout = findViewById(R.id.logout);
         btnMap = findViewById(R.id.btnMap);
         posts = findViewById(R.id.posts);
-        createPost = findViewById(R.id.createPost);
         settings = findViewById(R.id.settings);
         sharedPreferences = getSharedPreferences(prefKey, 0);
 
@@ -57,35 +55,35 @@ public class MainActivity extends AppCompatActivity {
     public void startPost(View view){
         Intent i = new Intent(this, PostsActivity.class);
         if (user!=null)
-        i.putExtra("User",user.toString());
+        i.putExtra("User",user);
         startActivity(i);
     }
 
     public void startMap(View view){
         Intent i = new Intent(this, MapsActivity.class);
         if (user!=null)
-        i.putExtra("User",user.toString());
+        i.putExtra("User",user);
         startActivity(i);
     }
 
-    public void startCreate(View view){
-        Intent i = new Intent(this, CreatePostActivity.class);
-        if (user!=null)
-        i.putExtra("User",user.toString());
-        startActivity(i);
-    }
+//    public void startCreate(View view){
+//        Intent i = new Intent(this, CreatePostActivity.class);
+//        if (user!=null)
+//        i.putExtra("User",user);
+//        startActivity(i);
+//    }
 
     public void startLogin(View view){
         Intent i = new Intent(this, LoginActivity.class);
         if (user!=null)
-        i.putExtra("User",user.toString());
+        i.putExtra("User",user);
         startActivity(i);
     }
 
     public void startSettings(View view){
         Intent i = new Intent(this, Settings.class);
         if (user!=null)
-        i.putExtra("User",user.toString());
+        i.putExtra("User",user);
         startActivity(i);
     }
 
@@ -155,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
     public void setButtons(boolean boo){
         btnMap.setEnabled(boo);
         posts.setEnabled(boo);
-        createPost.setEnabled(boo);
         settings.setEnabled(boo);
     }
 
