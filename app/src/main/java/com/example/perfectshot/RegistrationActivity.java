@@ -11,9 +11,20 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.example.perfectshot.ui.login.LoginActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class RegistrationActivity extends AppCompatActivity {
     //views
@@ -28,6 +39,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
     String msg;
 
+    RequestQueue queue;
+    String postURL;
+    String requestURL;
+    JSONObject postData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +55,8 @@ public class RegistrationActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
 
+        queue = Volley.newRequestQueue(this);
+        postURL= "https://frozen-reaches-15850.herokuapp.com/new_user";
 
     }
 
@@ -48,19 +66,49 @@ public class RegistrationActivity extends AppCompatActivity {
      * it will add the user to the database and take them to the log in activity.
      * @param v
      */
-    public void register(View v) throws AuthFailureError {
-        dao = new UserDAO(this);
+    public void register(View v) throws InterruptedException, ExecutionException, AuthFailureError {
+        //dao = new UserDAO(this);
         if (validateInputs()){
-
-                if (dao.add(user)){
-                    Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG).show();
-                    Log.d("User", "user added");
-                    Intent i = new Intent(this, LoginActivity.class);
+//            boolean boo = dao.add(user);
+//            Log.d("User", boo + "");
+//                if (boo){
+//                    Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG).show();
+//                    Log.d("User", "user added");
+//                    Intent i = new Intent(this, LoginActivity.class);
+//                    startActivity(i);
+//                }else{
+//                    Toast.makeText(this, "try new username/ email", Toast.LENGTH_LONG).show();
+//                    Log.d("User", "weird error");
+//                }
+            postData = new JSONObject();
+            try {
+                postData.put("first_name", user.getFirst_name());
+                postData.put("last_name", user.getLast_name());
+                postData.put("username", user.getUsername());
+                postData.put("password", user.getPassword());
+                postData.put("email",user.getEmail());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postURL, postData, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("User", "add user: " + response.toString());
+                    Toast.makeText(getApplicationContext(), "Registration complete", Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(i);
-                }else{
-                    Toast.makeText(this, "try new username/ email", Toast.LENGTH_LONG).show();
-                    Log.d("User", "weird error");
                 }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("User", "add user/e: " + error.toString());
+                    Toast.makeText(getApplicationContext(), "try new username/ email", Toast.LENGTH_LONG).show();
+                    username.setText("");
+                    email.setText("");
+                }
+            });
+            queue.add(jsonObjectRequest);
+
             }
         }
 

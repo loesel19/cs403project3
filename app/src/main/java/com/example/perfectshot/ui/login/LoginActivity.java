@@ -6,6 +6,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -14,9 +16,11 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -26,6 +30,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.perfectshot.MainActivity;
 import com.example.perfectshot.R;
 import com.example.perfectshot.RegistrationActivity;
@@ -37,6 +47,11 @@ import com.example.perfectshot.ui.login.LoginViewModel;
 import com.example.perfectshot.ui.login.LoginViewModelFactory;
 import com.example.perfectshot.databinding.ActivityLoginBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
+
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
@@ -45,6 +60,11 @@ public class LoginActivity extends AppCompatActivity {
     String prefKey = "Perfect Shot";
     SharedPreferences pref;
     UserDAO dao;
+    RequestQueue queue;
+    String postURL;
+    String requestURL;
+    JSONObject postData;
+    User user;
 
 
     @Override
@@ -64,8 +84,9 @@ public class LoginActivity extends AppCompatActivity {
 
         final Button registerButton = binding.register;
         registerButton.setEnabled(true);
-
+        requestURL = "https://frozen-reaches-15850.herokuapp.com/login?"; //add email=''password=''
         pref = getSharedPreferences(prefKey,0);
+        queue = Volley.newRequestQueue(getApplicationContext());
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -99,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
-                finish();
+
             }
         });
 
@@ -136,12 +157,13 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             /**
-             * this onClick method will search the db and see if a user is found with the username,
-             * and if the passwords match. if so we will place the userObject in shared preferences
+             * this onClick method will search the db and see if a user is found with the username.
+             * if so we will place the userObject in shared preferences
              * with an active status, and return the UI to the main menu, where the login button
              * will be replaced with a logout button
              * @param v
              */
+            //TODO:
             @Override
             public void onClick(View v) {
                 dao = new UserDAO(getApplicationContext());
@@ -149,25 +171,44 @@ public class LoginActivity extends AppCompatActivity {
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
 
-                User user = dao.get(usernameEditText.getText()+"", passwordEditText.getText()+"");
-                if (user != null) {
-                    if (user.getPassword().equals(passwordEditText.getText())) {
-                        user.setStatus(true);
-                        if (pref != null) {
-                            SharedPreferences.Editor editor = pref.edit();
-                            editor.putString("User", user.toString());
-                            editor.commit();
-                        }
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(i);
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Incorrect password", Toast.LENGTH_LONG).show();
-                        passwordEditText.setText("");
+                requestURL = requestURL + "email=" + usernameEditText.getText().toString()+
+                        "&password=" + passwordEditText.getText().toString();
+                Log.d("User", requestURL);
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, requestURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    user = new User(response.getString("username"), response.getString("password"),
+                                            response.getString("first_name"), response.getString("last_name"),
+                                            response.getString("email"));
+                                    user.setStatus(true);
+                                    Log.d("User", "Logged in:  " + user.toString());
+                                    Toast.makeText(getApplicationContext(), "welcome " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                    SharedPreferences.Editor editor = pref.edit();
+                                    editor.putString("User", user.toString());
+                                    editor.commit();
+                                    loginViewModel.login(user.getUsername(),user.getPassword());
+                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(i);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getApplicationContext(), "an error occurred", Toast.LENGTH_LONG).show();
+                                    Log.d("User", e.toString());
+                                    usernameEditText.setText("");
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "check username/ password", Toast.LENGTH_LONG).show();
+                        Log.d("User", "error response:" + error);
+                        usernameEditText.setText("");
                     }
-                }else{
-                    Toast.makeText(getApplicationContext(), "no user found", Toast.LENGTH_LONG).show();
-                    usernameEditText.setText("");
-                }
+                });
+                queue.add(request);
 
             }
         });
@@ -192,4 +233,5 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
+
 }
