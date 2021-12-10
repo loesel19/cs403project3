@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        API.init(getApplicationContext());
 
         login = findViewById(R.id.login);
         sharedPreferences = getSharedPreferences(prefKey, 0);
