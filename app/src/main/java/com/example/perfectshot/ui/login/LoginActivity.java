@@ -171,10 +171,10 @@ public class LoginActivity extends AppCompatActivity {
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
 
-                requestURL = requestURL + "email=" + usernameEditText.getText().toString()+
+                String url = requestURL + "email=" + usernameEditText.getText().toString()+
                         "&password=" + passwordEditText.getText().toString();
                 Log.d("User", requestURL);
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, requestURL, null,
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
@@ -184,7 +184,6 @@ public class LoginActivity extends AppCompatActivity {
                                             response.getString("email"));
                                     user.setStatus(true);
                                     Log.d("User", "Logged in:  " + user.toString());
-                                    Toast.makeText(getApplicationContext(), "welcome " + user.getUsername(), Toast.LENGTH_SHORT).show();
                                     SharedPreferences.Editor editor = pref.edit();
                                     editor.putString("User", user.toString());
                                     editor.commit();
@@ -225,9 +224,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
+
         // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "welcome " + model.getDisplayName(), Toast.LENGTH_SHORT).show();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

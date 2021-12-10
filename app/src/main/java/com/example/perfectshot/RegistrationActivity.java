@@ -67,19 +67,8 @@ public class RegistrationActivity extends AppCompatActivity {
      * @param v
      */
     public void register(View v) throws InterruptedException, ExecutionException, AuthFailureError {
-        //dao = new UserDAO(this);
         if (validateInputs()){
-//            boolean boo = dao.add(user);
-//            Log.d("User", boo + "");
-//                if (boo){
-//                    Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG).show();
-//                    Log.d("User", "user added");
-//                    Intent i = new Intent(this, LoginActivity.class);
-//                    startActivity(i);
-//                }else{
-//                    Toast.makeText(this, "try new username/ email", Toast.LENGTH_LONG).show();
-//                    Log.d("User", "weird error");
-//                }
+//
             postData = new JSONObject();
             try {
                 postData.put("first_name", user.getFirst_name());
@@ -125,8 +114,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String sUsername = username.getText().toString();
         String sPassword = password.getText().toString();
 
-        if (!((validateName(sName)) && validateEmail(sEmail) && validatePassword(sPassword) && validateUsername(sUsername)))
+        if (!((validateName(sName)) && validateEmail(sEmail) && validatePassword(sPassword) && validateUsername(sUsername))) {
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             return false;
+        }
         else {
             user = new User(sUsername, sPassword, sName.split(" ")[0], sName.split(" ")[1], sEmail);
             Log.d("User", "new user object created/ inputs were valid");
