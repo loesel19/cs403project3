@@ -48,30 +48,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void startPost(View view){
         Intent i = new Intent(this, PostsActivity.class);
+        if (user!=null)
         i.putExtra("User",user.toString());
         startActivity(i);
     }
 
     public void startMap(View view){
         Intent i = new Intent(this, MapsActivity.class);
+        if (user!=null)
         i.putExtra("User",user.toString());
         startActivity(i);
     }
 
     public void startCreate(View view){
         Intent i = new Intent(this, CreatePostActivity.class);
+        if (user!=null)
         i.putExtra("User",user.toString());
         startActivity(i);
     }
 
     public void startLogin(View view){
         Intent i = new Intent(this, LoginActivity.class);
+        if (user!=null)
         i.putExtra("User",user.toString());
         startActivity(i);
     }
 
     public void startSettings(View view){
         Intent i = new Intent(this, Settings.class);
+        if (user!=null)
         i.putExtra("User",user.toString());
         startActivity(i);
     }
