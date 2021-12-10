@@ -3,6 +3,7 @@ package com.example.perfectshot;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,10 +13,12 @@ import android.widget.ImageView;
 
 public class CreatePostActivity extends AppCompatActivity {
     ImageView imgToPost;
-    Button btnCamera, btnGallery;
+    Button btnCamera, btnGallery, btnPost;
     private static final int CHOOSE_IMAGE = 100;
     private static final int CAPTURE_IMAGE = 101;
     Uri imageURI;
+    Bitmap imageBitmap;
+    boolean imageUploaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,9 @@ public class CreatePostActivity extends AppCompatActivity {
         imgToPost = findViewById(R.id.imgToPost);
         btnCamera = findViewById(R.id.btnCamera);
         btnGallery = findViewById(R.id.btnGallery);
+        btnPost = findViewById(R.id.btnPost);
+
+        imageUploaded = false;
 
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +46,23 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+        btnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(dataValidate()){
+
+                }
+            }
+        });
+
+    }
+
+    private boolean dataValidate(){
+        boolean goodData = true;
+
+
+
+        return goodData;
     }
 
     private void openGallery(){
@@ -61,8 +84,8 @@ public class CreatePostActivity extends AppCompatActivity {
         }
 
         if(resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE){
-            imageURI = data.getData();
-            imgToPost.setImageURI(imageURI);
+            imageBitmap = (Bitmap)data.getExtras().get("data");
+            imgToPost.setImageBitmap(imageBitmap);
         }
     }
 
