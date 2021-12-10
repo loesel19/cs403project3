@@ -10,7 +10,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
 import com.example.perfectshot.ui.login.LoginActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class RegistrationActivity extends AppCompatActivity {
     //views
@@ -25,6 +39,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
     String msg;
 
+    RequestQueue queue;
+    String postURL;
+    String requestURL;
+    JSONObject postData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +55,8 @@ public class RegistrationActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
 
-        dao = new UserDAO();
-
+        queue = Volley.newRequestQueue(this);
+        postURL= "https://frozen-reaches-15850.herokuapp.com/new_user";
 
     }
 
@@ -47,29 +66,41 @@ public class RegistrationActivity extends AppCompatActivity {
      * it will add the user to the database and take them to the log in activity.
      * @param v
      */
-    public void register(View v){
+    public void register(View v) throws InterruptedException, ExecutionException, AuthFailureError {
         if (validateInputs()){
-
-            if (dao.contains(user)){
-                Toast.makeText(this, "Username already in use", Toast.LENGTH_LONG).show();
-                username.setText("");
-                Log.d("User", "duplicate username");
-            }else{
-                if (dao.add(user)){
-                    Toast.makeText(this, "Registration complete", Toast.LENGTH_LONG).show();
-                    Log.d("User", "user added");
-                    Intent i = new Intent(this, LoginActivity.class);
-                    startActivity(i);
-                }else{
-                    Toast.makeText(this, "something went wrong please try again", Toast.LENGTH_LONG).show();
-                    Log.d("User", "weird error");
-                }
+//
+            postData = new JSONObject();
+            try {
+                postData.put("first_name", user.getFirst_name());
+                postData.put("last_name", user.getLast_name());
+                postData.put("username", user.getUsername());
+                postData.put("password", user.getPassword());
+                postData.put("email",user.getEmail());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }else{
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-            Log.d("User", "user was not added");
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postURL, postData, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("User", "add user: " + response.toString());
+                    Toast.makeText(getApplicationContext(), "Registration complete", Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(i);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("User", "add user/e: " + error.toString());
+                    Toast.makeText(getApplicationContext(), "try new username/ email", Toast.LENGTH_LONG).show();
+                    username.setText("");
+                    email.setText("");
+                }
+            });
+            queue.add(jsonObjectRequest);
+
+            }
         }
-    }
+
 
     /**
      * this method will call validation methods for all the inputs and then returns true if inputs are valid
@@ -83,8 +114,10 @@ public class RegistrationActivity extends AppCompatActivity {
         String sUsername = username.getText().toString();
         String sPassword = password.getText().toString();
 
-        if (!((validateName(sName)) && validateEmail(sEmail) && validatePassword(sPassword) && validateUsername(sUsername)))
+        if (!((validateName(sName)) && validateEmail(sEmail) && validatePassword(sPassword) && validateUsername(sUsername))) {
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
             return false;
+        }
         else {
             user = new User(sUsername, sPassword, sName.split(" ")[0], sName.split(" ")[1], sEmail);
             Log.d("User", "new user object created/ inputs were valid");
