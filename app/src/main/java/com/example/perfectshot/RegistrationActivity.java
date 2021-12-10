@@ -61,9 +61,11 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     /**
-     * this activity will call the activity to validate the inputs, if invalid it displays a message
-     * with what is invalid, then it checks to see if the username is already in use, and if it is not
-     * it will add the user to the database and take them to the log in activity.
+     * this method will check to see if the input fields contain valid inputs, and if they do
+     * it tries to add the new user to the Database on the server side.
+     * if a positive response a message will be displayed and the user will be taken to the
+     * login activity, if it is a negative response/ volley error a message will be displayed
+     * and the username and email fields will be reset
      * @param v
      */
     public void register(View v) throws InterruptedException, ExecutionException, AuthFailureError {

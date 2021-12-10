@@ -1,3 +1,9 @@
+/**
+ * this class is no longer used, since the asynchronisity of Volley makes it difficult
+ * to verify user login to the UI, therefore I moved the volley queries to execute in the same
+ * activity as the UI that needs access to them, and the on response of the query can
+ * directly affect the UI
+ */
 package com.example.perfectshot;
 
 import android.content.Context;
