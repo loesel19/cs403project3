@@ -1,11 +1,13 @@
 package com.example.perfectshot;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +30,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +42,10 @@ public class CreatePostActivity extends AppCompatActivity {
     Button btnCamera, btnGallery, btnPost;
     private static final int CHOOSE_IMAGE = 100;
     private static final int CAPTURE_IMAGE = 101;
+    String currentPhotoPath;
     Uri imageURI;
     Bitmap imageBitmap;
+    File imageFile;
     boolean imageUploaded;
     EditText tvDesc;
     SeekBar skbRating;
@@ -172,7 +179,19 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private void openCamera(){
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(camera,CAPTURE_IMAGE);
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("fileerror","so the file didnt work");
+        }
+
+        if(photoFile != null){
+            Uri photoUri = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
+            camera.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
+            startActivityForResult(camera,CAPTURE_IMAGE);
+        }
     }
 
     @Override
@@ -184,9 +203,26 @@ public class CreatePostActivity extends AppCompatActivity {
         }
 
         if(resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE){
-            imageBitmap = (Bitmap)data.getExtras().get("data");
-            imgToPost.setImageBitmap(imageBitmap);
+            File file = new File(currentPhotoPath);
+            imageURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", file);
+            imgToPost.setImageURI(imageURI);
         }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
 }
