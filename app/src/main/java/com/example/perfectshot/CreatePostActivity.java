@@ -129,11 +129,16 @@ public class CreatePostActivity extends AppCompatActivity {
                 long imagename = System.currentTimeMillis();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 Bitmap bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), imageURI);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (imageURI != null){
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), imageURI);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    bitmap = imageBitmap;
                 }
+
                 bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
                 params.put("image", new DataPart(imagename + ".png", byteArrayOutputStream.toByteArray()));
                 return params;
