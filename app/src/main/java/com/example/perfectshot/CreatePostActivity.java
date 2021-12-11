@@ -148,6 +148,7 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     public void send_post(int imageID){
+        //Todo: author ID is hardcoded!
         Post post  = new Post(1, imageID, tvDesc.getText()+"", 0, 0);
         Log.d("MEMEME", post.toJson().toString());
 
