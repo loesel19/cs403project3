@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public void startPost(View view){
         Intent i = new Intent(this, PostsActivity.class);
         if (user!=null)
-        i.putExtra("User",user);
+            i.putExtra("User",user);
         startActivity(i);
     }
 

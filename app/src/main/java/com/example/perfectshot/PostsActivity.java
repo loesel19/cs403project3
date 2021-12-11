@@ -29,7 +29,7 @@ public class PostsActivity extends AppCompatActivity {
     public void startCreate(View view){
         Intent i = new Intent(this, CreatePostActivity.class);
         if (user!=null)
-            i.putExtra("User",user.toString());
+            i.putExtra("User",user);
         startActivity(i);
     }
 

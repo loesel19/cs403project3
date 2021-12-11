@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="@+id/post_img" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/txtRatingValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="[latitude]"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+            app:layout_constraintBaseline_toBaselineOf="@+id/txtRatingValue"
             app:layout_constraintStart_toStartOf="@+id/post_long" />
 
         <TextView
@@ -62,8 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Longitude:"
-            app:layout_constraintStart_toStartOf="@+id/textView5"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            app:layout_constraintStart_toStartOf="@+id/txtRatingValue"
+            app:layout_constraintTop_toBottomOf="@+id/txtRatingValue" />
 
         <TextView
             android:id="@+id/post_long"

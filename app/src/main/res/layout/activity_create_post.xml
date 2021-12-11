@@ -102,7 +102,7 @@
         app:layout_constraintStart_toEndOf="@+id/imgToPost" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtRatingValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3"

@@ -1,29 +1,30 @@
 package com.example.perfectshot;
 
-import android.net.Uri;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Post {
-    Uri postImage;
-    User author;
+    int postImage;
+    int author;
     String postDescription;
-    int postID, postRating;
+    int postID;
     float latLocation, longLocation;
 
     public Post() {
     }
 
-    public Post(Uri postImage, String postDescription, int postRating, float latLocation, float longLocation) {
+    public Post(int author, int postImage, String postDescription, float latLocation, float longLocation) {
         this.postImage = postImage;
         this.postDescription = postDescription;
-        this.postRating = postRating;
         this.latLocation = latLocation;
         this.longLocation = longLocation;
+        this.author = author;
     }
 
-    public Uri getPostImage() {return postImage; }
+    public int getPostImage() {return postImage; }
     public String getPostDescription() {return postDescription; }
-    public int getPostRating() { return postRating; }
-    public User getAuthor() { return author; }
+    public int getAuthor() { return author; }
     public float getLatLocation() { return latLocation; }
     public float getLongLocation() { return longLocation; }
 
@@ -34,9 +35,22 @@ public class Post {
                 ", author=" + author +
                 ", postDescription='" + postDescription + '\'' +
                 ", postID=" + postID +
-                ", postRating=" + postRating +
                 ", latLocation=" + latLocation +
                 ", longLocation=" + longLocation +
                 '}';
+    }
+
+    public JSONObject toJson(){
+        JSONObject j = new JSONObject();
+        try {
+            j.put("image_id", postImage);
+            j.put("author", author);
+            j.put("description", postDescription);
+            j.put("location_long", longLocation);
+            j.put("location_lat", latLocation);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return j;
     }
 }
