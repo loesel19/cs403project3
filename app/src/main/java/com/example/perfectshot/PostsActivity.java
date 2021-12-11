@@ -8,15 +8,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
@@ -69,7 +75,7 @@ public class PostsActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL, false);
         recPosts.setLayoutManager(linearLayoutManager);
 
-        postsAdapter = new PostsAdapter(posts, PostsActivity.this);
+        postsAdapter = new PostsAdapter(posts, getApplicationContext(), user);
         recPosts.setAdapter(postsAdapter);
 
         //Get the posts from DB
@@ -121,11 +127,13 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
     ArrayList<JSONObject> posts;
     RequestQueue queue;
     Context context;
+    User currentUser;
 
-    PostsAdapter(ArrayList<JSONObject> posts , Context context){
+    PostsAdapter(ArrayList<JSONObject> posts , Context context, User user){
         this.posts = posts;
         queue = Volley.newRequestQueue(context);
         this.context = context;
+        currentUser = user;
     }
 
     @NonNull
@@ -163,13 +171,33 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
             holder.post_lat.setText(lat+"");
             holder.post_long.setText(lon+"");
 
+            holder.postid = postInfo.getInt("id");
+            holder.userid = currentUser.id;
+
             //Gets author username from id
             getAuthor(author, holder.post_author);
+            getRatingScore(postInfo.getInt("id"), holder.post_rateScore);
             //Load image
             Picasso.get().load("https://frozen-reaches-15850.herokuapp.com/get_image/"+image_id).into(holder.post_img);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getRatingScore(int post, TextView target){
+        JsonObjectRequest r = new JsonObjectRequest(Request.Method.GET, "https://frozen-reaches-15850.herokuapp.com/get_rating?post="+post, null, response ->{
+            try {
+                //Log.i("KANGASTEST", response.toString());
+                double l = response.getDouble("value");
+                double dr = Math.round(l*10.0)/10.0;
+                target.setText(dr+"");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error ->{
+
+        });
+        queue.add(r);
     }
 
     //Gets author username from id
@@ -203,6 +231,9 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
         public TextView post_descript;
         public TextView post_rateScore;
         public ImageView post_img;
+        int userid = -1;
+        int postid = -1;
+        public Spinner spinner;
         public Button post_mapBtn;
 
         // We also create a constructor that accepts the entire item row
@@ -218,6 +249,50 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
             post_descript = (TextView) itemView.findViewById(R.id.post_descript);
             post_rateScore = (TextView) itemView.findViewById(R.id.post_rateScore);
             post_img = (ImageView) itemView.findViewById(R.id.post_img);
+            spinner = (Spinner) itemView.findViewById(R.id.spinner);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context,
+                    R.array.rating_values, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+            spinner.setAdapter(adapter);
+            RequestQueue q = Volley.newRequestQueue(context);
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (i>0){
+
+                        JSONObject j = new JSONObject();
+                        try {
+                            j.put("rater", userid);
+                            j.put("post", postid);
+                            j.put("value", i);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Log.d("EVAN", j.toString());
+                        JsonObjectRequest r = new JsonObjectRequest(Request.Method.POST, "https://frozen-reaches-15850.herokuapp.com/new_rating", j, response -> {
+                            try {
+                                double ll = response.getDouble("new_value");
+                                double dr = Math.round(ll*10.0)/10.0;
+                                post_rateScore.setText(dr+"");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }, error -> {
+
+                        });
+                        q.add(r);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
             post_mapBtn = (Button) itemView.findViewById(R.id.post_mapBtn);
         }
     }

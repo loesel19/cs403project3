@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
                                 try {
                                     user = new User(response.getString("username"), response.getString("password"),
                                             response.getString("first_name"), response.getString("last_name"),
-                                            response.getString("email"));
+                                            response.getString("email"), response.getInt("id"));
                                     user.setStatus(true);
                                     Log.d("User", "Logged in:  " + user.toString());
                                     SharedPreferences.Editor editor = pref.edit();

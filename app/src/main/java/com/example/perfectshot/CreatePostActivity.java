@@ -65,25 +65,9 @@ public class CreatePostActivity extends AppCompatActivity {
         btnLocation = findViewById(R.id.btnLocation);
         btnPost = findViewById(R.id.btnPost);
         tvDesc = findViewById(R.id.txtDescription);
-        skbRating = findViewById(R.id.skbRating);
         txtRatingValue = findViewById(R.id.txtRatingValue);
 
-        skbRating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtRatingValue.setText(skbRating.getProgress() + "");
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
         imageUploaded = false;
 
@@ -155,7 +139,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     public void send_post(int imageID){
         //Todo: author ID is hardcoded!
-        Post post  = new Post(1, imageID, tvDesc.getText()+"", lat, lon);
+        Post post  = new Post(user.id, imageID, tvDesc.getText()+"", lat, lon);
         Log.d("MEMEME", post.toJson().toString());
 
 
