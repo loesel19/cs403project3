@@ -143,22 +143,34 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
         try {
             author = postInfo.getInt("author");
 
-        int image_id = postInfo.getInt("image_id");
-                String desc = postInfo.getString("description");
-                float lon = postInfo.getLong("location_long");
-                float lat = postInfo.getLong("location_lat");
-                holder.post_descript.setText(desc);
-                holder.post_lat.setText(lat+"");
-                holder.post_long.setText(lon+"");
+            int image_id = postInfo.getInt("image_id");
+            String desc = postInfo.getString("description");
+            float lon = postInfo.getLong("location_long");
+            float lat = postInfo.getLong("location_lat");
+            //Create onClick for the button and pass lat,lon,desc
+            holder.itemView.setOnClickListener(new View.OnClickListener(){
 
-                //Gets author username from id
-                getAuthor(author, holder.post_author);
-                //Load image
-                Picasso.get().load("https://frozen-reaches-15850.herokuapp.com/get_image/"+image_id).into(holder.post_img);
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(context, MapsActivity.class);
+                    i.putExtra("desc",desc);
+                    i.putExtra("lat",lat);
+                    i.putExtra("lon", lon);
+
+                }
+            });
+            holder.post_descript.setText(desc);
+            holder.post_lat.setText(lat+"");
+            holder.post_long.setText(lon+"");
+
+            //Gets author username from id
+            getAuthor(author, holder.post_author);
+            //Load image
+            Picasso.get().load("https://frozen-reaches-15850.herokuapp.com/get_image/"+image_id).into(holder.post_img);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        }
+    }
 
     //Gets author username from id
     public void getAuthor(int author, TextView target){
