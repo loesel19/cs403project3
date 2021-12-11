@@ -42,19 +42,16 @@ public class CreatePostActivity extends AppCompatActivity {
     Button btnCamera, btnGallery, btnPost;
     private static final int CHOOSE_IMAGE = 100;
     private static final int CAPTURE_IMAGE = 101;
-    String currentPhotoPath;
+    String currentPhotoPath, description;
+    int initialRating;
     Uri imageURI;
-    Bitmap imageBitmap;
-    File imageFile;
     boolean imageUploaded;
     EditText tvDesc;
     SeekBar skbRating;
     TextView txtRatingValue;
     User user;
 
-
     RequestQueue queue;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,47 +73,36 @@ public class CreatePostActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) { }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
+        //initialize these variables
         imageUploaded = false;
+        description = "";
 
-        queue =  Volley.newRequestQueue(getApplicationContext());
-
-        btnGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openGallery();
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCamera();
-            }
-        });
-
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(dataValidate()){
-                    send_data();
-                }
-            }
-        });
+        //Get the currently logged in user
         Intent i = getIntent();
         user = (User) i.getSerializableExtra("User");
 
+        queue =  Volley.newRequestQueue(getApplicationContext());
+
+        btnGallery.setOnClickListener(view -> openGallery());
+
+        btnCamera.setOnClickListener(view -> openCamera());
+
+        btnPost.setOnClickListener(view -> {
+            description = tvDesc.getText() + "";
+            initialRating = skbRating.getProgress();
+            if(dataValidate()){
+                send_data();
+            }
+        });
     }
 
+    //Evan's magic
     public void send_data(){
         VolleyMultiPart volleyMultipartRequest = new VolleyMultiPart(Request.Method.POST, "https://frozen-reaches-15850.herokuapp.com/image_upload",
                 response -> {
@@ -149,6 +135,7 @@ public class CreatePostActivity extends AppCompatActivity {
         queue.add(volleyMultipartRequest);
     }
 
+    //Evan's magic
     public void send_post(int imageID){
         Post post  = new Post(1, imageID, tvDesc.getText()+"", 0, 0);
         Log.d("MEMEME", post.toJson().toString());
@@ -164,12 +151,17 @@ public class CreatePostActivity extends AppCompatActivity {
         this.queue.add(r);
     }
 
+    //method that returns false if there is no photo or there is no description
     private boolean dataValidate(){
-        boolean goodData = true;
-
-
-
-        return goodData;
+        if(!imageUploaded){
+            Toast.makeText(this,"Please upload a photo",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(description.equals("")){
+            Toast.makeText(this,"Please add a description",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void openGallery(){
@@ -177,6 +169,11 @@ public class CreatePostActivity extends AppCompatActivity {
         startActivityForResult(gallery, CHOOSE_IMAGE);
     }
 
+    //Wow, this is so much more complicated than the gallery.
+    //And it isnt even that many lines of code
+    //But dear lord was this painful to write
+    //Anyway, we pass a file location/URI to the intent-
+    //This lets the intent SAVE the photo to a file we can pull later
     private void openCamera(){
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File photoFile = null;
@@ -184,9 +181,9 @@ public class CreatePostActivity extends AppCompatActivity {
             photoFile = createImageFile();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("fileerror","so the file didnt work");
+            Log.e("fileerror","the file didnt work");
         }
-
+        //Hypothetically it shant be null...
         if(photoFile != null){
             Uri photoUri = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
             camera.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
@@ -197,18 +194,22 @@ public class CreatePostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode,int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
+        //If they chose a image from their gallery we simply HAVE the URI
         if(resultCode == RESULT_OK && requestCode == CHOOSE_IMAGE){
             imageURI = data.getData();
             imgToPost.setImageURI(imageURI);
+            imageUploaded = true;
         }
-
+        //If they take a pic themself, we need to grab the URI from the file system
         if(resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE){
             File file = new File(currentPhotoPath);
             imageURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", file);
             imgToPost.setImageURI(imageURI);
+            imageUploaded = true;
         }
     }
 
+    //Helper class that deals with grabbing a unique file name based on the current time and date
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -219,10 +220,8 @@ public class CreatePostActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
 }
