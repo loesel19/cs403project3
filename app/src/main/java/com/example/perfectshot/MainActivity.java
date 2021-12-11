@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             User x = null;
             return x;
         }
-        if (strUser.split(" ").length != 6){
+        if (strUser.split(" ").length != 7){
             User w = null;
             return w;
         }
@@ -176,6 +176,11 @@ public class MainActivity extends AppCompatActivity {
             u.setStatus(true);
         else
             u.setStatus(false);
+        try{
+            u.id =Integer.parseInt(strUser.split(" ")[6]);
+        }catch (Exception ex){
+
+        }
         return u;
     }
 
