@@ -14,7 +14,7 @@ public class User implements Serializable {
     private String last_name;
     private String email;
     private boolean loggedIn;
-
+    public int id=-1;
 
     public User(String username, String password, String first_name, String last_name, String email){
         this.username = username;
@@ -22,6 +22,15 @@ public class User implements Serializable {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
+    }
+
+    public User(String username, String password, String first_name, String last_name, String email, int id){
+        this.username = username;
+        this.password = password;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.email = email;
+        this.id = id;
     }
     public void setStatus(boolean status){
         this.loggedIn = status;
@@ -46,7 +55,10 @@ public class User implements Serializable {
     }
 
     public String toString(){
-        return first_name.trim() + " " + last_name.trim() + " " + email.trim() + " " + username.trim() + " " + password.trim() + " " + loggedIn;
+        String s = first_name.trim() + " " + last_name.trim() + " " + email.trim() + " " + username.trim() + " " + password.trim() + " " + loggedIn;
+        if (id>0)
+            s += " " + id;
+        return  s;
     }
 
 }

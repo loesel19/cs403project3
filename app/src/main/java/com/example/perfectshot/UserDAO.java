@@ -105,7 +105,7 @@ JSONObject postData;
                 try {
                     u = new User(response.getString("username"), response.getString("password"),
                             response.getString("first_name"), response.getString("last_name"),
-                            response.getString("email"));
+                            response.getString("email"), response.getInt("id"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
