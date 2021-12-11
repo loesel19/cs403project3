@@ -1,19 +1,18 @@
 package com.example.perfectshot;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,18 +22,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.perfectshot.databinding.ActivityMapsBinding;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
 
     final int REQUEST_LOCATION_PERMISSION = 1;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    ArrayList<JSONObject> posts;
+    private LatLng position;
+    private String post_desc;
+    private boolean inCreation;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +44,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        posts = new ArrayList<>();
+        intent = getIntent();
+        float lat = intent.getFloatExtra("lat",43.4195f);
+        float lon = intent.getFloatExtra("lon",-83.9508f);
+        post_desc = intent.getStringExtra("desc");
+        inCreation = intent.getBooleanExtra("create",false);
+        position = new LatLng(lat,lon);
+
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //start map on Michigan
-        LatLng michigan = new LatLng(43, -83);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(michigan));
+        //if loading a post, create a marker
+        if(post_desc != null){
+            mMap.addMarker(new MarkerOptions().position(position).title(post_desc));
+        }
+        //otherwise just load on map on the position, (defaults to mi)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position,7));
         //Enable location button
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationButtonClickListener(this);
         enableMyLocation();
+        //set MapClickListener
+        if(inCreation) {
+            mMap.setOnMapClickListener(this);
+        }
     }
 
     private void enableMyLocation() {
@@ -88,20 +88,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
-    private void addMarker(){
-        //add markers for the posts
-        Log.d("MapDebug", "addMarkers");
-        for (JSONObject postInfo: posts) {
-            try{
-                String desc = postInfo.getString("description");
-                float lon = postInfo.getLong("location_long");
-                float lat = postInfo.getLong("location_lat");
-                LatLng post = new LatLng(lat,lon);
-                mMap.addMarker(new MarkerOptions().position(post).title(desc));
-                Log.d("MapDebug", "added post at: " + lat + "," + lon);
-            } catch(JSONException e){
-                e.printStackTrace();
+    @Override
+    public void onMapClick(@NonNull LatLng latLng) {
+        Log.d("MapDebug", "Lat: " + latLng.latitude + "Lon: " + latLng.longitude);
+        Marker postLocation = mMap.addMarker(new MarkerOptions().position(latLng));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("Would you like to select this location for your post?");
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent data = new Intent();
+                Log.d("MapDebug", "Lat: " + latLng.latitude + "Lon: " + latLng.longitude);
+                data.putExtra("location",latLng);
+                setResult(RESULT_OK,data);
+                finish();
             }
-        }
+        });
+        alertDialog.setNegativeButton("No",(dialogInterface, id) -> {
+            if (postLocation != null) {
+                postLocation.remove();
+            }
+        });
+        alertDialog.create().show();
     }
 }

@@ -2,6 +2,7 @@ package com.example.perfectshot;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,9 +36,10 @@ import java.util.Map;
 
 public class CreatePostActivity extends AppCompatActivity {
     ImageView imgToPost;
-    Button btnCamera, btnGallery, btnPost;
+    Button btnCamera, btnGallery, btnPost, btnLocation;
     private static final int CHOOSE_IMAGE = 100;
     private static final int CAPTURE_IMAGE = 101;
+    private static final int LOCATION = 102;
     Uri imageURI;
     Bitmap imageBitmap;
     boolean imageUploaded;
@@ -44,6 +47,8 @@ public class CreatePostActivity extends AppCompatActivity {
     SeekBar skbRating;
     TextView txtRatingValue;
     User user;
+    float lat;
+    float lon;
 
 
     RequestQueue queue;
@@ -57,6 +62,7 @@ public class CreatePostActivity extends AppCompatActivity {
         imgToPost = findViewById(R.id.imgToPost);
         btnCamera = findViewById(R.id.btnCamera);
         btnGallery = findViewById(R.id.btnGallery);
+        btnLocation = findViewById(R.id.btnLocation);
         btnPost = findViewById(R.id.btnPost);
         tvDesc = findViewById(R.id.txtDescription);
         txtRatingValue = findViewById(R.id.txtRatingValue);
@@ -133,7 +139,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
     public void send_post(int imageID){
         //Todo: author ID is hardcoded!
-        Post post  = new Post(user.id, imageID, tvDesc.getText()+"", 0, 0);
+        Post post  = new Post(user.id, imageID, tvDesc.getText()+"", lat, lon);
         Log.d("MEMEME", post.toJson().toString());
 
 
@@ -177,6 +183,18 @@ public class CreatePostActivity extends AppCompatActivity {
             imageBitmap = (Bitmap)data.getExtras().get("data");
             imgToPost.setImageBitmap(imageBitmap);
         }
+
+        if(resultCode == RESULT_OK && requestCode == LOCATION) {
+            LatLng latLng = (LatLng) data.getParcelableExtra("location");
+            lat = (float) latLng.latitude;
+            lon = (float) latLng.longitude;
+        }
+    }
+
+    public void pickLocation(View v){
+        Intent i = new Intent(this, MapsActivity.class);
+        i.putExtra("create",true);
+        startActivityForResult(i,LOCATION);
     }
 
 }
