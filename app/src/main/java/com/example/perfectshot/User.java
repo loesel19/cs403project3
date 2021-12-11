@@ -2,10 +2,12 @@ package com.example.perfectshot;
 
 import android.widget.Toast;
 
+import java.io.Serializable;
+
 /**
  * this is a simple User object with username, password and a status
  */
-public class User {
+public class User implements Serializable {
     private String username;
     private String password;
     private String first_name;

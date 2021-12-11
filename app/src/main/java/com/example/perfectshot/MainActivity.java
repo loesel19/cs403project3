@@ -18,13 +18,19 @@ import androidx.core.app.ActivityCompat;
 import com.example.perfectshot.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
+
     User user;
     SharedPreferences sharedPreferences;
     String prefKey = "Perfect Shot";
-    Button login;
+
+    Button btnLogin;
+    Button logout;
+    Button btnMap;
+    Button posts;
+    Button settings;
+
     boolean userLoggedIn;
 
 
@@ -34,14 +40,58 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        login = findViewById(R.id.login);
+        btnLogin = findViewById(R.id.btnLogin);
+        logout = findViewById(R.id.logout);
+        btnMap = findViewById(R.id.btnMap);
+        posts = findViewById(R.id.posts);
+        settings = findViewById(R.id.settings);
         sharedPreferences = getSharedPreferences(prefKey, 0);
-        checkLoginStatus();
 
-        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!=
-        PackageManager.PERMISSION_GRANTED) {
+        getPermissions();
+
+        Log.d("Main", "here");
+    }
+
+    public void startPost(View view){
+        Intent i = new Intent(this, PostsActivity.class);
+        if (user!=null)
+            i.putExtra("User",user);
+        startActivity(i);
+    }
+
+    public void startMap(View view){
+        Intent i = new Intent(this, MapsActivity.class);
+        if (user!=null)
+        i.putExtra("User",user);
+        startActivity(i);
+    }
+
+//    public void startCreate(View view){
+//        Intent i = new Intent(this, CreatePostActivity.class);
+//        if (user!=null)
+//        i.putExtra("User",user);
+//        startActivity(i);
+//    }
+
+    public void startLogin(View view){
+        Intent i = new Intent(this, LoginActivity.class);
+        if (user!=null)
+        i.putExtra("User",user);
+        startActivity(i);
+    }
+
+    public void startSettings(View view){
+        Intent i = new Intent(this, Settings.class);
+        if (user!=null)
+        i.putExtra("User",user);
+        startActivity(i);
+    }
+
+    private void getPermissions(){
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!=
+                PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
-            REQUEST_CAMERA_PERMISSION);
+                    REQUEST_CAMERA_PERMISSION);
         }else{
             Log.d("permissiontest","camera granted");
         }
@@ -55,30 +105,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startPost(View view){
-        Intent i = new Intent(this, PostsActivity.class);
-        startActivity(i);
-    }
-
-    public void startMap(View view){
-        Intent i = new Intent(this, MapsActivity.class);
-        startActivity(i);
-    }
-
-    public void startCreate(View view){
-        Intent i = new Intent(this, CreatePostActivity.class);
-        startActivity(i);
-    }
-
-    public void startLogin(View view){
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-    }
-
-    public void startSettings(View view){
-        Intent i = new Intent(this, Settings.class);
-        startActivity(i);
-    }
 
 
     /**
@@ -90,10 +116,44 @@ public class MainActivity extends AppCompatActivity {
         if (temp == null){
             userLoggedIn = false;
             Toast.makeText(this, "please log in or register", Toast.LENGTH_SHORT).show();
+            logout.setEnabled(false);
+            setButtons(false);
         }else{
             user = temp;
-            Toast.makeText(this, "Welcome " + user.getFirst_name(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Welcome " + user.getUsername(), Toast.LENGTH_SHORT).show();
+            userLoggedIn = true;
+            btnLogin.setEnabled(false);
+            logout.setEnabled(true);
+            setButtons(true);
         }
+    }
+
+    /**
+     * this method will get called when a user clicks the logout button. it will just overwrite the user
+     * field in shared preferences, and reset any button properties as needed. we could store all the
+     * usernames that have logged out in a string set, so that we could suggest them when a user
+     * logs in, but thats a V2 issue
+     * @param v
+     */
+    public void logout(View v){
+        if (user != null && user.getStatus()){
+            user.setStatus(false);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("User", null);
+            editor.commit();
+            Toast.makeText(this, "logged out "  +user.getUsername(), Toast.LENGTH_SHORT).show();
+            btnLogin.setEnabled(true);
+            logout.setEnabled(false);
+            user = null;
+            setButtons(false);
+        }else{
+            Toast.makeText(this, "logout failed!", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void setButtons(boolean boo){
+        btnMap.setEnabled(boo);
+        posts.setEnabled(boo);
+        settings.setEnabled(boo);
     }
 
     /**
@@ -117,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
         else
             u.setStatus(false);
         return u;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        checkLoginStatus();
     }
 
 }
