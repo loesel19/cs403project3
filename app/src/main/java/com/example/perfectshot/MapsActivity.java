@@ -1,5 +1,6 @@
 package com.example.perfectshot;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -7,20 +8,33 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.perfectshot.databinding.ActivityMapsBinding;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     final int REQUEST_LOCATION_PERMISSION = 1;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+    ArrayList<JSONObject> posts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +47,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        posts = new ArrayList<>();
     }
 
     /**
@@ -47,6 +63,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //start map on Michigan
+        LatLng michigan = new LatLng(43, -83);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(michigan));
+        //Enable location button
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationButtonClickListener(this);
         enableMyLocation();
@@ -68,4 +88,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
+    private void addMarker(){
+        //add markers for the posts
+        Log.d("MapDebug", "addMarkers");
+        for (JSONObject postInfo: posts) {
+            try{
+                String desc = postInfo.getString("description");
+                float lon = postInfo.getLong("location_long");
+                float lat = postInfo.getLong("location_lat");
+                LatLng post = new LatLng(lat,lon);
+                mMap.addMarker(new MarkerOptions().position(post).title(desc));
+                Log.d("MapDebug", "added post at: " + lat + "," + lon);
+            } catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -155,16 +155,28 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
             String desc = postInfo.getString("description");
             float lon = postInfo.getLong("location_long");
             float lat = postInfo.getLong("location_lat");
+            //Create onClick for the button and pass lat,lon,desc
+            holder.itemView.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(context, MapsActivity.class);
+                    i.putExtra("desc",desc);
+                    i.putExtra("lat",lat);
+                    i.putExtra("lon", lon);
+
+                }
+            });
             holder.post_descript.setText(desc);
             holder.post_lat.setText(lat+"");
             holder.post_long.setText(lon+"");
+
             holder.postid = postInfo.getInt("id");
             holder.userid = currentUser.id;
 
-            getRatingScore(postInfo.getInt("id"), holder.post_rateScore);
-
             //Gets author username from id
             getAuthor(author, holder.post_author);
+            getRatingScore(postInfo.getInt("id"), holder.post_rateScore);
             //Load image
             Picasso.get().load("https://frozen-reaches-15850.herokuapp.com/get_image/"+image_id).into(holder.post_img);
         } catch (JSONException e) {
