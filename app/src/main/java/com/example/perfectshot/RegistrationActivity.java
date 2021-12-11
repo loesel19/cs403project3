@@ -121,7 +121,7 @@ public class RegistrationActivity extends AppCompatActivity {
             return false;
         }
         else {
-            user = new User(sUsername, sPassword, sName.split(" ")[0], sName.split(" ")[1], sEmail);
+            user = new User(sUsername, sPassword, sName.split(" ")[0], sName.split(" ")[1], sEmail, -1);
             Log.d("User", "new user object created/ inputs were valid");
             return true;
         }
