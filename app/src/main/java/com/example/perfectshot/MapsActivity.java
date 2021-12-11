@@ -45,8 +45,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         intent = getIntent();
-        float lat = intent.getFloatExtra("lat",43.4195f);
-        float lon = intent.getFloatExtra("lon",-83.9508f);
+        Double lat = intent.getDoubleExtra("lat",43.4195);
+        Double lon = intent.getDoubleExtra("lon",-83.9508);
         post_desc = intent.getStringExtra("desc");
         inCreation = intent.getBooleanExtra("create",false);
         position = new LatLng(lat,lon);

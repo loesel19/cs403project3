@@ -153,8 +153,8 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
             int image_id = postInfo.getInt("image_id");
             String desc = postInfo.getString("description");
-            float lon = postInfo.getLong("location_long");
-            float lat = postInfo.getLong("location_lat");
+            Double lon = postInfo.getDouble("location_long");
+            Double lat = postInfo.getDouble("location_lat");
             //Create onClick for the button and pass lat,lon,desc
             holder.post_mapBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -168,8 +168,8 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
                 }
             });
             holder.post_descript.setText(desc);
-            holder.post_lat.setText(lat+"");
-            holder.post_long.setText(lon+"");
+            holder.post_lat.setText(Math.round(lat*10000.0)/10000.0+"");
+            holder.post_long.setText(Math.round(lon*10000.0)/10000.0+"");
 
             holder.postid = postInfo.getInt("id");
             holder.userid = currentUser.id;

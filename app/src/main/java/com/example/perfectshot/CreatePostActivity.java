@@ -47,8 +47,8 @@ public class CreatePostActivity extends AppCompatActivity {
     SeekBar skbRating;
     TextView txtRatingValue;
     User user;
-    float lat;
-    float lon;
+    Double lat;
+    Double lon;
 
 
     RequestQueue queue;
@@ -186,8 +186,8 @@ public class CreatePostActivity extends AppCompatActivity {
 
         if(resultCode == RESULT_OK && requestCode == LOCATION) {
             LatLng latLng = (LatLng) data.getParcelableExtra("location");
-            lat = (float) latLng.latitude;
-            lon = (float) latLng.longitude;
+            lat =  latLng.latitude;
+            lon =  latLng.longitude;
         }
     }
 

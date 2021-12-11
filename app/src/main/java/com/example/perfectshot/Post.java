@@ -9,12 +9,12 @@ public class Post {
     int author;
     String postDescription;
     int postID;
-    float latLocation, longLocation;
+    Double latLocation, longLocation;
 
     public Post() {
     }
 
-    public Post(int author, int postImage, String postDescription, float latLocation, float longLocation) {
+    public Post(int author, int postImage, String postDescription, Double latLocation, Double longLocation) {
         this.postImage = postImage;
         this.postDescription = postDescription;
         this.latLocation = latLocation;
@@ -25,8 +25,8 @@ public class Post {
     public int getPostImage() {return postImage; }
     public String getPostDescription() {return postDescription; }
     public int getAuthor() { return author; }
-    public float getLatLocation() { return latLocation; }
-    public float getLongLocation() { return longLocation; }
+    public Double getLatLocation() { return latLocation; }
+    public Double getLongLocation() { return longLocation; }
 
     @Override
     public String toString() {
