@@ -69,7 +69,7 @@ public class PostsActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL, false);
         recPosts.setLayoutManager(linearLayoutManager);
 
-        postsAdapter = new PostsAdapter(posts, getApplicationContext());
+        postsAdapter = new PostsAdapter(posts, PostsActivity.this);
         recPosts.setAdapter(postsAdapter);
 
         //Get the posts from DB
@@ -148,14 +148,14 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
             float lon = postInfo.getLong("location_long");
             float lat = postInfo.getLong("location_lat");
             //Create onClick for the button and pass lat,lon,desc
-            holder.itemView.setOnClickListener(new View.OnClickListener(){
-
+            holder.post_mapBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(context, MapsActivity.class);
-                    i.putExtra("desc",desc);
-                    i.putExtra("lat",lat);
-                    i.putExtra("lon", lon);
+                    i.putExtra("desc", desc);
+                    i.putExtra("lat", lat);
+                    i.putExtra("lon",lon);
+                    context.startActivity(i);
 
                 }
             });
@@ -203,6 +203,7 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
         public TextView post_descript;
         public TextView post_rateScore;
         public ImageView post_img;
+        public Button post_mapBtn;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -217,6 +218,7 @@ class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
             post_descript = (TextView) itemView.findViewById(R.id.post_descript);
             post_rateScore = (TextView) itemView.findViewById(R.id.post_rateScore);
             post_img = (ImageView) itemView.findViewById(R.id.post_img);
+            post_mapBtn = (Button) itemView.findViewById(R.id.post_mapBtn);
         }
     }
 }
