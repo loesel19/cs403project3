@@ -144,7 +144,9 @@ public class CreatePostActivity extends AppCompatActivity {
 
 
         JsonObjectRequest r = new JsonObjectRequest(Request.Method.POST, "https://frozen-reaches-15850.herokuapp.com/new_post", post.toJson(), response ->{
-            finish();
+            Intent i = new Intent(this,PostsActivity.class);
+            startActivity(i);
+            //finish();
         }, error ->{
             Toast.makeText(this,"error posting: " + error.toString(), Toast.LENGTH_LONG).show();
             finish();
