@@ -76,13 +76,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    public void startSettings(View view){
-        Intent i = new Intent(this, Settings.class);
-        if (user!=null)
-        i.putExtra("User",user);
-        startActivity(i);
-    }
-
     private void getPermissions(){
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!=
                 PackageManager.PERMISSION_GRANTED) {

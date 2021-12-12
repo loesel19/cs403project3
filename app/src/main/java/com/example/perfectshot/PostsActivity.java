@@ -110,14 +110,6 @@ public class PostsActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    //Go to the Settings Activity
-    public void startSettings(View view){
-        Intent i = new Intent(this, Settings.class);
-        if (user!=null)
-            i.putExtra("User",user);
-        startActivity(i);
-    }
-
     public void backBtn(View v){
         super.finish();
     }
