@@ -27,9 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnLogin;
     Button logout;
-    Button btnMap;
     Button posts;
-    Button settings;
 
     boolean userLoggedIn;
 
@@ -42,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogin = findViewById(R.id.btnLogin);
         logout = findViewById(R.id.logout);
-        btnMap = findViewById(R.id.btnMap);
         posts = findViewById(R.id.posts);
-        settings = findViewById(R.id.settings);
         sharedPreferences = getSharedPreferences(prefKey, 0);
 
         getPermissions();
@@ -151,9 +147,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void setButtons(boolean boo){
-        btnMap.setEnabled(boo);
         posts.setEnabled(boo);
-        settings.setEnabled(boo);
     }
 
     /**

@@ -32,7 +32,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +51,6 @@ public class CreatePostActivity extends AppCompatActivity {
     Bitmap imageBitmap;
     boolean imageUploaded;
     EditText tvDesc;
-    SeekBar skbRating;
     TextView txtRatingValue;
     User user;
     Double lat;
@@ -68,24 +70,12 @@ public class CreatePostActivity extends AppCompatActivity {
         btnGallery = findViewById(R.id.btnGallery);
         btnPost = findViewById(R.id.btnPost);
         tvDesc = findViewById(R.id.txtDescription);
-        skbRating = findViewById(R.id.skbRating);
         txtRatingValue = findViewById(R.id.txtRatingValue);
-
-        skbRating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtRatingValue.setText(skbRating.getProgress() + "");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
-        });
 
         //initialize these variables
         imageUploaded = false;
+        lat = 0.0;
+        lon = 0.0;
 
         queue =  Volley.newRequestQueue(getApplicationContext());
 
@@ -95,7 +85,6 @@ public class CreatePostActivity extends AppCompatActivity {
 
         btnPost.setOnClickListener(view -> {
             description = tvDesc.getText() + "";
-            initialRating = skbRating.getProgress();
             if(dataValidate()){
                 send_data();
             }
@@ -165,6 +154,11 @@ public class CreatePostActivity extends AppCompatActivity {
             Toast.makeText(this,"Please add a description",Toast.LENGTH_SHORT).show();
             return false;
         }
+        if(lat == 0.0 && lon == 0.0){
+            Toast.makeText(this,"Please choose a location",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         return true;
     }
 
