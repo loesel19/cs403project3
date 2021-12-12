@@ -75,7 +75,7 @@ public class PostsActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL, false);
         recPosts.setLayoutManager(linearLayoutManager);
 
-        postsAdapter = new PostsAdapter(posts, getApplicationContext(), user);
+        postsAdapter = new PostsAdapter(posts, PostsActivity.this, user);
         recPosts.setAdapter(postsAdapter);
 
         //Get the posts from DB
